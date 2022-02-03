@@ -5,7 +5,7 @@ cd dist
 
 git init
 git add -A
-git commit -m 'New Deployment'
+git commit -m 'deploy'
 git push -f git@github.com:Helga151/rekrutacja_Cogitech.git master:gh-pages
 
 cd -
