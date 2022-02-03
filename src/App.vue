@@ -1,5 +1,51 @@
 <template>
   <div class="overflow-auto">
+	<b-col lg="6" class="my-1">
+		<b-form-group
+			label="Wyszukaj"
+			label-for="filter-input"
+			label-cols-sm="3"
+			label-align-sm="right"
+			label-size="sm"
+			class="mb-0"
+		>
+			<b-input-group size="sm">
+			<b-form-input
+				id="filter-input"
+				v-model="filter"
+				type="search"
+				placeholder="Wpisz frazę, którą chcesz znaleźć"
+			></b-form-input>
+
+			<b-input-group-append>
+				<b-button variant="outline-primary" :disabled="!filter" @click="filter = ''">Wyczyść</b-button>
+			</b-input-group-append>
+			</b-input-group>
+		</b-form-group>
+		</b-col>
+
+		<b-col lg="6" class="my-1">
+		<b-form-group
+			v-model="sortDirection"
+			label="Filtrowanie po"
+			description="Zaznaczenie obu filtrów jest jednoznaczne z niezaznaczeniem żadnego - wyszukiwanie po całej tablicy"
+			label-cols-sm="3"
+			label-align-sm="right"
+			label-size="sm"
+			class="mb-0"
+			v-slot="{ ariaDescribedby }"
+		>
+			<b-form-checkbox-group
+			v-model="filterOn"
+			:aria-describedby="ariaDescribedby"
+			class="mt-1"
+			>
+			<b-form-checkbox value="title">Tytule</b-form-checkbox>
+			<b-form-checkbox value="body">Treści</b-form-checkbox>
+			</b-form-checkbox-group>
+		</b-form-group>
+	</b-col>
+
     <b-table class="table"
 		sticky-header="750px" hover fixed head-variant="light" 
 		id="my-table"
@@ -7,15 +53,20 @@
 		:fields="fields"
 		:per-page="perPage"
 		:current-page="currentPage"
+		:filter="filter"
+		:filter-included-fields="filterOn"
 		sort-icon-left
 		small
+		@filtered="onFilter"
     >
 	<template #cell(author)="data">
 		Olga Gerlich <button class="delete" @click="deleteRow(data.item.id)"><i class="fa fa-trash"></i></button>
 	</template>
 	<template #cell(body)="data">
-		<tr class="read_more"><td v-if="!readMore[data.item.id]" @click="toggleReadMore(data.item.id)" >{{ data.item.body.substring(0, 20) }} ...</td>
-		<td v-if="readMore[data.item.id]" @click="readMore[data.item.id] = false" >{{ data.item.body }}</td></tr>
+		<tr class="read_more">
+			<td v-if="!readMore[data.item.id]" @click="toggleReadMore(data.item.id)" >{{ data.item.body.substring(0, 20) }} ...</td>
+			<td v-if="readMore[data.item.id]" @click="readMore[data.item.id] = false" >{{ data.item.body }}</td>
+		</tr>
 	</template>
 	</b-table>
 
@@ -60,6 +111,8 @@ export default {
 			],
 			api: [],
 			readMore: {},
+			filter: null,
+			filterOn: []
 		}
     },
 	mounted() {
@@ -85,9 +138,12 @@ export default {
 			this.$set(this.readMore, id, true);
 		},
 		deleteRow(id) {
-			//this.api.splice(id, 1);
 			this.api = this.api.filter((item) => item.id !== id);
         	this.$emit('input', this.api);
+		},
+		onFilter(filteredItems) {
+			this.rows = filteredItems.length;
+			this.currentPage = 1;
 		}
 	},
 	computed: {
@@ -107,13 +163,13 @@ export default {
 		cursor: pointer;
 	}
 	.delete {
-		background-color: DodgerBlue; /* Blue background */
-		border: none; /* Remove borders */
-		color: white; /* White text */
+		background-color: DodgerBlue;
+		border: none; 
+		color: white; 
 		margin-left: 20px;
-		padding: 12px 16px; /* Some padding */
-		font-size: 16px; /* Set a font size */
-		cursor: pointer; /* Mouse pointer on hover */
+		padding: 12px 16px; 
+		font-size: 16px; 
+		cursor: pointer;
 	}
 	.delete:hover {
 		background-color: RoyalBlue;
