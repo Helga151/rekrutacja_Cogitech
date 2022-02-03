@@ -11,7 +11,7 @@
 		small
     >
 	<template #cell(author)="data">
-		{{ data.item.id }} Olga Gerlich <button class="delete" @click="deleteRow(data.item.id)"><i class="fa fa-trash"></i></button>
+		Olga Gerlich <button class="delete" @click="deleteRow(data.item.id)"><i class="fa fa-trash"></i></button>
 	</template>
 	<template #cell(body)="data">
 		<tr class="read_more"><td v-if="!readMore[data.item.id]" @click="toggleReadMore(data.item.id)" >{{ data.item.body.substring(0, 20) }} ...</td>
@@ -86,7 +86,7 @@ export default {
 		},
 		deleteRow(id) {
 			//this.api.splice(id, 1);
-			this.api = this.api.filter((item, i) => i !== id - 1);
+			this.api = this.api.filter((item) => item.id !== id);
         	this.$emit('input', this.api);
 		}
 	},
