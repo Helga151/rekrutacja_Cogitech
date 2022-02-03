@@ -1,6 +1,7 @@
 <template>
   <div class="overflow-auto">
     <b-table
+		sticky-header="750px" hover fixed head-variant="light" 
 		id="my-table"
 		:items="api"
 		:fields="fields"
@@ -8,8 +9,12 @@
 		:current-page="currentPage"
 		small
     >
-	<template #cell(author)>
-		Olga Gerlich
+	<template #cell(author)="data">
+		{{ data.item.id }} Olga Gerlich
+	</template>
+	<template #cell(body)="data" class="read_more">
+		<tr><td v-if="!readMore[data.item.id]" @click="toggleReadMore(data.item.id)" style="cursor: pointer;">{{ data.item.body.substring(0, 20) }} ...</td></tr>
+		<tr><td v-if="readMore[data.item.id]" @click="readMore[data.item.id] = false" style="cursor: pointer;">{{ data.item.body }}</td></tr>
 	</template>
 	</b-table>
 
@@ -37,8 +42,8 @@ export default {
 			perPage: 10,
 			fields: [
 				{
-					key: 'title', 
-					label: 'Tytuł',
+					key: 'title', //key to refer to api data
+					label: 'Tytuł', //what will be shown
 					sortable: true
 				},
 				{
@@ -52,7 +57,8 @@ export default {
 					sortable: false
 				}				
 			],
-			api: []
+			api: [],
+			readMore: {}
 		}
     },
 	mounted() {
@@ -74,6 +80,9 @@ export default {
 		handlePageChange(value) {
 			this.page = value;
 		},
+		toggleReadMore(id) {
+			this.$set(this.readMore, id, true);
+		}
 	},
 	computed: {
 		rows() {
