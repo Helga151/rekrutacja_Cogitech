@@ -1,6 +1,6 @@
-# my-vue-app
+# Recruitment assignment to Cogitech Poznań by Olga Gerlich
 
-## Project setup
+### Project setup
 ```
 npm install
 ```
